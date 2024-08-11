@@ -1,0 +1,42 @@
+/*设置主界面*/
+MainWindow{
+    background-color:rgb(56,57,58);
+}
+
+/*设置菜单栏*/
+QMenuBar{
+    color:rgb(231,231,231);
+    background-color:rgb(46,47,48);
+}
+
+/*设置下拉菜单栏*/
+QMenu{
+    color:rgb(231,231,231);
+    background-color:rgb(120,120,120);
+}
+
+/*设置被选中菜单栏*/
+QMenuBar::item:selected{
+    background-color:rgb(80,80,80);
+}
+
+/*设置被选中下拉菜单栏*/
+QMenu::item:selected{
+    background-color:rgb(49,96,154);
+}
+
+
+
+
+QWidget#widget_vl_left_main{
+    background-color:rgb(100,100,100);
+}
+QWidget#widget_vl_left_top{
+    background-color:rgb(46,47,48);
+}
+QWidget#widget_vl_right_main{
+    background-color:rgb(100,100,100);
+}
+QWidget#widget_vl_right_top{
+    background-color:rgb(46,47,48);
+}

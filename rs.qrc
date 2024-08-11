@@ -1,0 +1,31 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icon/add-music.png</file>
+        <file>icon/add-picture.png</file>
+        <file>icon/afferent.png</file>
+        <file>icon/Camera.png</file>
+        <file>icon/camera_2.png</file>
+        <file>icon/config.png</file>
+        <file>icon/doc_add.png</file>
+        <file>icon/Gear.png</file>
+        <file>icon/hamburger-button.png</file>
+        <file>icon/Home.png</file>
+        <file>icon/Left_Arrow.png</file>
+        <file>icon/like.png</file>
+        <file>icon/more-two.png</file>
+        <file>icon/power.png</file>
+        <file>icon/preview-open.png</file>
+        <file>icon/Right_Arrow.png</file>
+        <file>icon/Search.png</file>
+        <file>icon/setting-config.png</file>
+        <file>icon/Tag.png</file>
+        <file>icon/tag-one.png</file>
+        <file>icon/zoom-in.png</file>
+        <file>icon/zoom-out.png</file>
+        <file>style/style.qss</file>
+        <file>icon/delete.png</file>
+        <file>icon/delete-five.png</file>
+        <file>icon/picture-album.png</file>
+        <file>icon/pic-one.png</file>
+    </qresource>
+</RCC>

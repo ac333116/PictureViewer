@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>701</width>
+    <height>523</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="hl_cen">
+    <property name="spacing">
+     <number>2</number>
+    </property>
+    <property name="leftMargin">
+     <number>2</number>
+    </property>
+    <property name="topMargin">
+     <number>2</number>
+    </property>
+    <property name="rightMargin">
+     <number>2</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="hl_main" stretch="1,10">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="vl_left" stretch="1,15">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="vl_left_top">
+          <item>
+           <widget class="QWidget" name="widget_vl_left_top" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="styleSheet">
+                <string notr="true">QLabel{
+	color:white;
+	font-size:15px;
+}</string>
+               </property>
+               <property name="text">
+                <string>文件夹</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="vl_left_main">
+          <item>
+           <widget class="QWidget" name="widget_vl_left_main" native="true">
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="file_list">
+               <item>
+                <widget class="QListWidget" name="file_list_widget">
+                 <property name="styleSheet">
+                  <string notr="true">background-color:rgb(110,110,110);</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="vl_right" stretch="1,15">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="vl_right_top">
+          <item>
+           <widget class="QWidget" name="widget_vl_right_top" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="label_2">
+               <property name="styleSheet">
+                <string notr="true">QLabel{
+	color:white;
+	font-size:15px;
+}</string>
+               </property>
+               <property name="text">
+                <string>浏览窗</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="vl_right_main">
+          <item>
+           <widget class="QWidget" name="widget_vl_right_main" native="true">
+            <layout class="QGridLayout" name="gridLayout">
+             <property name="leftMargin">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>2</number>
+             </property>
+             <property name="rightMargin">
+              <number>2</number>
+             </property>
+             <property name="bottomMargin">
+              <number>2</number>
+             </property>
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="picture_list">
+               <item row="0" column="0">
+                <widget class="QTableWidget" name="picture_table_widget">
+                 <property name="styleSheet">
+                  <string notr="true">background-color:rgb(80,80,80);</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>701</width>
+     <height>17</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
