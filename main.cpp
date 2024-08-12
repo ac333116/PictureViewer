@@ -2,6 +2,18 @@
 
 #include <QApplication>
 #include <QFile>
+// float Time=0;
+
+// void timer()
+// {
+//     float interval = 0.01;//正值间隔
+//     int t = static_cast<int>(interval*1000);
+//     while (1) {
+//         qDebug()<<Time;
+//         std::this_thread::sleep_for(std::chrono::milliseconds(t));
+//         Time+=interval;
+//     }
+// }
 
 int main(int argc, char *argv[])
 {
@@ -23,6 +35,8 @@ int main(int argc, char *argv[])
     w.setWindowTitle("Album");
     w.showMaximized();
     w.show();
+
+    // std::thread t_time(timer);
 
     return a.exec();
 }

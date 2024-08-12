@@ -18,9 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     //文件列表初始化
     fileListInitialization();
 
-
-
-
 }
 
 MainWindow::~MainWindow()
@@ -52,10 +49,18 @@ QMenu* menu_file = menuBar()->addMenu(tr("文件(&F)"));
 
 //创建设置菜单
 QMenu* menu_set = menuBar()->addMenu(tr("设置(&S)"));
-    //
-    QAction* act_music = new QAction(QIcon("D:\\QT\\Projects\\myPhotoAlbum\\icon\\add-music"),tr("设置"),this);
+    //设置菜单
+    QAction* act_music = new QAction(QIcon(":icon/add-music.png"),tr("设置菜单"),this);
     act_music->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_M));
     menu_set->addAction(act_music);
+    //图片展示放大
+    QAction* act_zoom_in = new QAction(QIcon(":icon/zoom-in.png"),tr("图片放大"),this);
+    menu_set->addAction(act_zoom_in);
+    connect(act_zoom_in,&QAction::triggered,this,&MainWindow::SlotZoomIn);
+    //图片展示放大
+    QAction* act_zoom_out = new QAction(QIcon(":icon/zoom-out.png"),tr("图片缩小"),this);
+    menu_set->addAction(act_zoom_out);
+    connect(act_zoom_out,&QAction::triggered,this,&MainWindow::SlotZoomOut);
 }
 //文件列表初始化
 void MainWindow::fileListInitialization(){
@@ -73,8 +78,6 @@ void MainWindow::fileListInitialization(){
             showPicture();
         }
     });
-
-
 
 }
 //图片表格初始化
@@ -95,9 +98,17 @@ void MainWindow::pictureTableInitialization()
     //设置滚动模式：按像素
     ui->picture_table_widget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->picture_table_widget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    //图片加载信号连接
+    connect(this,&MainWindow::loadSP_signal,this,&MainWindow::loadSinglePicture);
 }
 
-
+//计算新的一列格子数
+void MainWindow::columnCountUpdate()
+{
+    if(columnCount != 1800/pictureMaxSize){
+        columnCount = 1800/pictureMaxSize;
+    }
+}
 
 //槽函数：创建文件夹
 void MainWindow::SlotCreateProject(bool)
@@ -130,6 +141,65 @@ void MainWindow::SlotCreateProject(bool)
     item->setSizeHint(QSize(100,40));//调整item尺寸
     ui->file_list_widget->addItem(item);//添加至file_list_widget
     //ui->file_list_widget->addItem(getName(qFileDialog.selectedFiles()[0]));
+}
+
+void MainWindow::SlotZoomIn()
+{
+    if(pictureMaxSize<800){
+        pictureMaxSize+=100;
+        columnCountUpdate();
+        showPicture();
+    }
+}
+
+void MainWindow::SlotZoomOut()
+{
+    if(pictureMaxSize>100){
+        pictureMaxSize-=100;
+        columnCountUpdate();
+        showPicture();
+    }
+}
+
+void MainWindow::wheelEvent(QWheelEvent *event)
+{
+    Qt::KeyboardModifiers modifiers = event->modifiers();
+
+    // Ctrl键被按下
+    if (modifiers & Qt::ControlModifier)
+    {
+        if (event->angleDelta().y() > 0) // Ctrl + 滚轮向上
+        {
+            if(pictureMaxSize<800){
+                pictureMaxSize+=50;
+                columnCountUpdate();
+                showPicture();
+            }
+        }
+        else// Ctrl + 滚轮向下
+        {
+            if(pictureMaxSize>100){
+                pictureMaxSize-=50;
+                columnCountUpdate();
+                showPicture();
+            }
+        }
+    }
+
+}
+
+void MainWindow::loadSinglePicture(int i, int j, MyLabel *label)
+{
+        // 将QLabel添加到表格指定位置单元格中
+        //qDebug()<<"添加"<<i<<"  "<<j<<"\n";
+        ui->picture_table_widget->setCellWidget(i, j, label);
+        //qDebug()<<"成功"<<i<<"  "<<j<<"\n";
+
+        //自动调整所有行或列的大小以适应其内容
+        ui->picture_table_widget->resizeColumnsToContents();
+        ui->picture_table_widget->resizeRowsToContents();
+
+        //QCoreApplication::processEvents();//等待将当前图片绘制进窗口
 }
 
 
@@ -178,8 +248,6 @@ void MainWindow::showPicture(){
         qDebug() << "path does not exist:";
         return;
     }
-
-
     //定义用于图片路径存放的列表
     QStringList imagePaths;
     // 设置过滤条件，只查找图片文件
@@ -190,25 +258,46 @@ void MainWindow::showPicture(){
         // 将文件的完整路径添加到列表中
         imagePaths.append(fileInfo.absoluteFilePath());
     }
-
     //打印检查所有存入的图片的路径
     // for(QString str:imagePaths){
     //     qDebug()<<str<<"\n";
     // }
 
+    //清除旧Label指针
+    QVector<QWidget*> widgetsToRemove;
+    //遍历表格中的所有单元格
+    for (int row = 0; row < ui->picture_table_widget->rowCount(); ++row) {
+        for (int column = 0; column < ui->picture_table_widget->columnCount(); ++column) {
+            QWidget* widget = ui->picture_table_widget->cellWidget(row, column);
+            if (widget) {
+                // 如果存在widget，则添加到待删除列表中
+                widgetsToRemove.push_back(widget);
+            }
+        }
+    }
     ui->picture_table_widget->clearContents();//清除旧图片
-    //qDebug()<<"清除图片";
+    for (QWidget* widget : widgetsToRemove) { //安全地删除所有widget指针
+        delete widget;
+    }
+
     if(imagePaths.size()>columnCount*rowCount){//如果单元格小于图片数量，增加单元格
         ui->picture_table_widget->setRowCount(imagePaths.size()/columnCount+1);
     }
-
 
     //将所有图片添加到picture_table_widget中
     int i=0,j=0;
     for(QString str:imagePaths)
     {
+        MyLabel *label = new MyLabel(str,this);
+        label->setAlignment((Qt::AlignCenter | Qt::AlignVCenter));//设置label中内容为水平和中心对齐
+        label->setMargin(10);//设置图片与label间距
 
-        addSinglePicture(str,i,j);
+        //std::future<void>f_result = async(std::launch::async, [this,str,i,j](){this->addSinglePicture(str,i,j);});
+        //std::thread th([this,str,i,j](){this->addSinglePicture(str,i,j);});
+        //addSinglePicture(str,i,j);
+        ImageLoaderThread *th = new ImageLoaderThread(label,str,i,j,pictureMaxSize);
+        connect(th,&ImageLoaderThread::loadSP_signal,this,&MainWindow::loadSinglePicture);
+        th->start();
 
         j++;
         if(j==columnCount){
@@ -216,13 +305,10 @@ void MainWindow::showPicture(){
             i++;
         }
     }
-
-    //自动调整所有行或列的大小以适应其内容
-    ui->picture_table_widget->resizeColumnsToContents();
-    ui->picture_table_widget->resizeRowsToContents();
 }
 
-void MainWindow::addSinglePicture(QString path,int i,int j){
+/*
+void MainWindow::addSinglePicture(QString &path,int i,int j){
     //QLabel *label = new QLabel(this);
     MyLabel *label = new MyLabel(path,this);
     label->setAlignment((Qt::AlignCenter | Qt::AlignVCenter));//设置label中内容为水平和中心对齐
@@ -233,24 +319,38 @@ void MainWindow::addSinglePicture(QString path,int i,int j){
         //可以选择调整pixmap的大小以适应单元格，或者保持原样
         //pixmap = pixmap.scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     //修改图片尺寸
+
     int w,h;
-    if(pixmap.width()>pixmap.height()){
-        w=400;
-        h=pixmap.height()*400/pixmap.width();
+    if(pixmap.width()<=pictureMaxSize && pixmap.height()<=pictureMaxSize){
+        w=pixmap.width();
+        h=pixmap.height();
+    }
+    else if(pixmap.width()>pixmap.height()){
+        w=pictureMaxSize;
+        h=pixmap.height()*pictureMaxSize/pixmap.width();
     }
     else{
-        h=400;
-        w=pixmap.width()*400/pixmap.height();
+        h=pictureMaxSize;
+        w=pixmap.width()*pictureMaxSize/pixmap.height();
     }
     pixmap = pixmap.scaled(QSize(w,h));
 
+
     label->setPixmap(pixmap);
 
-    // 将QLabel添加到表格指定位置单元格中
-    ui->picture_table_widget->setCellWidget(i, j, label);
-    //qDebug()<<"添加"<<i<<"  "<<j<<"\n";
+    emit loadSP_signal(i,j,label);
+//     // 将QLabel添加到表格指定位置单元格中
+//     //qDebug()<<"添加"<<i<<"  "<<j<<"\n";
+//     ui->picture_table_widget->setCellWidget(i, j, label);
+//     //qDebug()<<"成功"<<i<<"  "<<j<<"\n";
 
+//     //自动调整所有行或列的大小以适应其内容
+//     ui->picture_table_widget->resizeColumnsToContents();
+//     ui->picture_table_widget->resizeRowsToContents();
+
+//     QCoreApplication::processEvents();//等待将当前图片绘制进窗口
 }
+*/
 
 
 

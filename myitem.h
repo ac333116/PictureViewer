@@ -13,8 +13,6 @@ public:
     QString filePath;
 
 
-
-
 };
 
 #endif // MYITEM_H
