@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QSpacerItem>
 #include <QWheelEvent>
+#include <QTimer>
 
 #include "myitem.h"
 #include "largerviewdialog.h"
@@ -44,37 +45,37 @@ private:
     //LargerViewDialog *lvd;//大浏览图片窗口
     int columnCount = 4;//一列的格子数量
     int rowCount = 50;//一行的格子行数
-    int pictureMaxSize = 400;
+    int pictureMaxSize = 400;//单个图片最大尺寸
+    int pictureNum=0;//当前图片数量
+    //MyLabel **labelGroup;
+    QVector<MyLabel*> labelGroup;
+    QVector<QPixmap*> pixmapGroup;
+
+    qint64 lastWheelTime=0;
 
     //记录存入文件列表
     // QStringList pathlist;
     // void showPathList();
 
-    // QList<File>fileList;
-    // void showFileList();
-    // void addFile(File file);
+    void columnCountUpdate();//计算新的一列格子数
 
-    //计算新的一列格子数
-    void columnCountUpdate();
+    QString getName(QString str); //取得文件名(指定路径)
 
-    //取得文件名(指定路径)
-    QString getName(QString str);
-
-    //图片组显示函数(showPath路径)
-    void showPicture();
+    void showPicture();//图片组显示函数(showPath路径)
     //void addSinglePicture(QString &path,int i,int j);
 
+    void reloadPicture();//图片重加载
 
-
-signals:
-    void loadSP_signal(int i,int j,MyLabel *label);
+// signals:
+//     void loadSP_signal(int i,int j,MyLabel *label);
 
 private slots:
     void SlotCreateProject(bool);//创建工程槽函数
+    void SlotClearProject();//项目清空
     void SlotZoomIn();//展示图片放大
     void SlotZoomOut();//展示图片放大
     void wheelEvent(QWheelEvent *event);//重写鼠标滚轮事件：通过鼠标滚轮控制缩放
-    void loadSinglePicture(int i,int j,MyLabel *label);
+    void loadSinglePicture(int i,int j,MyLabel *label);//终加载函数
 
 
 };

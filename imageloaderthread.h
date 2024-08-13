@@ -12,7 +12,7 @@ class ImageLoaderThread : public QThread
 
 public:
     // ImageLoaderThread(QString path,int i,int j,int pictureMaxSize,QWidget *qw);
-    ImageLoaderThread(MyLabel *label,QString path,int i,int j,int pictureMaxSize);
+    ImageLoaderThread(MyLabel *label,QPixmap *pixmap,QString path,int i,int j,int pictureMaxSize);
 
     void run() override ;
 
@@ -22,6 +22,7 @@ signals:
 
 private:
     MyLabel *label;
+    QPixmap *pixmap;
     QString path;
     int i;
     int j;

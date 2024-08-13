@@ -12,8 +12,8 @@ class MyLabel : public QLabel
 public:
     MyLabel(QString path,QWidget *parent=nullptr);
 
-private:
     QString path;
+private:
     LargerViewDialog *lvd=nullptr;//大图浏览窗口
 
     void mousePressEvent(QMouseEvent *event);//鼠标点击事件

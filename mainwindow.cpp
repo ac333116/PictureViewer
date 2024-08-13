@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     //文件列表初始化
     fileListInitialization();
 
+
+
 }
 
 MainWindow::~MainWindow()
@@ -41,7 +43,7 @@ QMenu* menu_file = menuBar()->addMenu(tr("文件(&F)"));
     //清空项目
     QAction* act_clear_project = new QAction(QIcon(":icon/delete-five"),tr("清空项目"));
     menu_file->addAction(act_clear_project);
-    connect(act_clear_project,&QAction::triggered,[this](){ui->file_list_widget->clear();ui->picture_table_widget->clear();});
+    connect(act_clear_project,&QAction::triggered,this,&MainWindow::SlotClearProject);
     //打开项目动作
     QAction* act_open_project = new QAction(QIcon(":/icon/afferent.png"),tr("打开项目"));
     act_create_project->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_O));
@@ -57,7 +59,7 @@ QMenu* menu_set = menuBar()->addMenu(tr("设置(&S)"));
     QAction* act_zoom_in = new QAction(QIcon(":icon/zoom-in.png"),tr("图片放大"),this);
     menu_set->addAction(act_zoom_in);
     connect(act_zoom_in,&QAction::triggered,this,&MainWindow::SlotZoomIn);
-    //图片展示放大
+    //图片展示缩小
     QAction* act_zoom_out = new QAction(QIcon(":icon/zoom-out.png"),tr("图片缩小"),this);
     menu_set->addAction(act_zoom_out);
     connect(act_zoom_out,&QAction::triggered,this,&MainWindow::SlotZoomOut);
@@ -99,15 +101,24 @@ void MainWindow::pictureTableInitialization()
     ui->picture_table_widget->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
     ui->picture_table_widget->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     //图片加载信号连接
-    connect(this,&MainWindow::loadSP_signal,this,&MainWindow::loadSinglePicture);
+    //connect(this,&MainWindow::loadSP_signal,this,&MainWindow::loadSinglePicture);
 }
 
 //计算新的一列格子数
 void MainWindow::columnCountUpdate()
 {
-    if(columnCount != 1800/pictureMaxSize){
-        columnCount = 1800/pictureMaxSize;
+    // if(columnCount != 1800/pictureMaxSize){
+    //     columnCount = 1800/pictureMaxSize;
+    //     ui->picture_table_widget->setColumnCount(columnCount);
+    // }
+    int distance = columnCount * pictureMaxSize - ui->picture_table_widget->width();
+
+    int varianceNum=distance/pictureMaxSize;
+    if(distance>0&&(distance%pictureMaxSize>0.2*pictureMaxSize)){
+        varianceNum++;
     }
+    columnCount = columnCount - varianceNum;
+    ui->picture_table_widget->setColumnCount(columnCount);
 }
 
 //槽函数：创建文件夹
@@ -143,12 +154,49 @@ void MainWindow::SlotCreateProject(bool)
     //ui->file_list_widget->addItem(getName(qFileDialog.selectedFiles()[0]));
 }
 
+void MainWindow::SlotClearProject()
+{
+    ui->file_list_widget->clear();
+    //ui->picture_table_widget->clear();
+    // QVector<QWidget*> widgetsToRemove;
+    // for (int row = 0; row < ui->picture_table_widget->rowCount(); ++row) {
+    //     for (int column = 0; column < ui->picture_table_widget->columnCount(); ++column) {
+    //         QWidget* widget = ui->picture_table_widget->cellWidget(row, column);
+    //         if (widget) {
+    //             widgetsToRemove.push_back(widget);
+    //         }
+    //     }
+    // }
+    // ui->picture_table_widget->clearContents();
+    // for (QWidget* widget : widgetsToRemove) {
+    //     delete widget;
+    // }
+
+    ui->picture_table_widget->clearContents();
+    for(int i; i<pictureNum; i++){
+        if(labelGroup[i]!=nullptr){
+            delete labelGroup[i];
+            labelGroup[i] = nullptr;
+        }
+        if(pixmapGroup[i]!=nullptr){
+            delete pixmapGroup[i];
+            pixmapGroup[i] = nullptr;
+        }
+    }
+    labelGroup.clear();
+    pixmapGroup.clear();
+
+    showPath = "";
+    pictureNum = 0;
+}
+
 void MainWindow::SlotZoomIn()
 {
-    if(pictureMaxSize<800){
+    if(pictureMaxSize<ui->picture_table_widget->width()-100){
         pictureMaxSize+=100;
-        columnCountUpdate();
-        showPicture();
+        //columnCountUpdate();
+        // showPicture();
+        reloadPicture();
     }
 }
 
@@ -156,8 +204,15 @@ void MainWindow::SlotZoomOut()
 {
     if(pictureMaxSize>100){
         pictureMaxSize-=100;
-        columnCountUpdate();
-        showPicture();
+        //columnCountUpdate();
+        // showPicture();
+        reloadPicture();
+    }
+    else if(pictureMaxSize>10){
+        pictureMaxSize-=10;
+        //columnCountUpdate();
+        // showPicture();
+        reloadPicture();
     }
 }
 
@@ -168,38 +223,50 @@ void MainWindow::wheelEvent(QWheelEvent *event)
     // Ctrl键被按下
     if (modifiers & Qt::ControlModifier)
     {
+        if(QDateTime::currentMSecsSinceEpoch()-lastWheelTime < 80){//禁止80ms以内操作
+            return;
+        }
         if (event->angleDelta().y() > 0) // Ctrl + 滚轮向上
         {
-            if(pictureMaxSize<800){
+            if(pictureMaxSize<ui->picture_table_widget->width()-50){
                 pictureMaxSize+=50;
-                columnCountUpdate();
-                showPicture();
+                //columnCountUpdate();
+                // showPicture();
+                reloadPicture();
             }
         }
         else// Ctrl + 滚轮向下
         {
             if(pictureMaxSize>100){
                 pictureMaxSize-=50;
-                columnCountUpdate();
-                showPicture();
+                //columnCountUpdate();
+                // showPicture();
+                reloadPicture();
+            }
+            else if(pictureMaxSize>10){
+                pictureMaxSize-=10;
+                //columnCountUpdate();
+                // showPicture();
+                reloadPicture();
             }
         }
+        lastWheelTime = QDateTime::currentMSecsSinceEpoch();//更新时间戳
     }
 
 }
 
 void MainWindow::loadSinglePicture(int i, int j, MyLabel *label)
 {
-        // 将QLabel添加到表格指定位置单元格中
-        //qDebug()<<"添加"<<i<<"  "<<j<<"\n";
-        ui->picture_table_widget->setCellWidget(i, j, label);
-        //qDebug()<<"成功"<<i<<"  "<<j<<"\n";
+    //label->setPixmap(pixmap);
 
-        //自动调整所有行或列的大小以适应其内容
-        ui->picture_table_widget->resizeColumnsToContents();
-        ui->picture_table_widget->resizeRowsToContents();
+    // 将QLabel添加到表格指定位置单元格中
+    ui->picture_table_widget->setCellWidget(i, j, label);
 
-        //QCoreApplication::processEvents();//等待将当前图片绘制进窗口
+    //自动调整所有行或列的大小以适应其内容
+    ui->picture_table_widget->resizeColumnsToContents();
+    ui->picture_table_widget->resizeRowsToContents();
+
+    //QCoreApplication::processEvents();//等待将当前图片绘制进窗口
 }
 
 
@@ -263,24 +330,40 @@ void MainWindow::showPicture(){
     //     qDebug()<<str<<"\n";
     // }
 
-    //清除旧Label指针
-    QVector<QWidget*> widgetsToRemove;
-    //遍历表格中的所有单元格
-    for (int row = 0; row < ui->picture_table_widget->rowCount(); ++row) {
-        for (int column = 0; column < ui->picture_table_widget->columnCount(); ++column) {
-            QWidget* widget = ui->picture_table_widget->cellWidget(row, column);
-            if (widget) {
-                // 如果存在widget，则添加到待删除列表中
-                widgetsToRemove.push_back(widget);
-            }
+    // //清除旧Label指针
+    // QVector<QWidget*> widgetsToRemove;
+    // //遍历表格中的所有单元格
+    // for (int row = 0; row < ui->picture_table_widget->rowCount(); ++row) {
+    //     for (int column = 0; column < ui->picture_table_widget->columnCount(); ++column) {
+    //         QWidget* widget = ui->picture_table_widget->cellWidget(row, column);
+    //         if (widget) {
+    //             // 如果存在widget，则添加到待删除列表中
+    //             widgetsToRemove.push_back(widget);
+    //         }
+    //     }
+    // }
+    // ui->picture_table_widget->clearContents();//清除旧图片
+    // for (QWidget* widget : widgetsToRemove) { //删除所有widget指针
+    //     delete widget;
+    // }
+
+    ui->picture_table_widget->clearContents();
+    for(int i; i<pictureNum; i++){
+        if(labelGroup[i]!=nullptr){
+            delete labelGroup[i];
+            labelGroup[i] = nullptr;
+        }
+        if(pixmapGroup[i]!=nullptr){
+            delete pixmapGroup[i];
+            pixmapGroup[i] = nullptr;
         }
     }
-    ui->picture_table_widget->clearContents();//清除旧图片
-    for (QWidget* widget : widgetsToRemove) { //安全地删除所有widget指针
-        delete widget;
-    }
+    labelGroup.clear();
+    pixmapGroup.clear();
 
-    if(imagePaths.size()>columnCount*rowCount){//如果单元格小于图片数量，增加单元格
+    pictureNum = imagePaths.size();//更新图片数量
+
+    if(pictureNum>columnCount*rowCount){//如果单元格小于图片数量，增加单元格
         ui->picture_table_widget->setRowCount(imagePaths.size()/columnCount+1);
     }
 
@@ -289,13 +372,54 @@ void MainWindow::showPicture(){
     for(QString str:imagePaths)
     {
         MyLabel *label = new MyLabel(str,this);
+        //labelGroup[j+i*columnCount] = label;
+        labelGroup.push_back(label);
         label->setAlignment((Qt::AlignCenter | Qt::AlignVCenter));//设置label中内容为水平和中心对齐
         label->setMargin(10);//设置图片与label间距
+
+        QPixmap *pixmap = new QPixmap;
+        pixmapGroup.push_back(pixmap);
 
         //std::future<void>f_result = async(std::launch::async, [this,str,i,j](){this->addSinglePicture(str,i,j);});
         //std::thread th([this,str,i,j](){this->addSinglePicture(str,i,j);});
         //addSinglePicture(str,i,j);
-        ImageLoaderThread *th = new ImageLoaderThread(label,str,i,j,pictureMaxSize);
+        ImageLoaderThread *th = new ImageLoaderThread(label,pixmap,str,i,j,pictureMaxSize);
+        connect(th,&ImageLoaderThread::loadSP_signal,this,&MainWindow::loadSinglePicture);
+        th->start();
+
+        j++;
+        if(j==columnCount){
+            j=0;
+            i++;
+        }
+    }
+
+
+}
+
+void MainWindow::reloadPicture()
+{
+    ui->picture_table_widget->clearContents();
+    for(int i=0; i<pictureNum; i++){
+        if(labelGroup[i]!=nullptr){
+            QString str = labelGroup[i]->path;
+            delete labelGroup[i];
+            //labelGroup[i] = nullptr;
+            labelGroup[i] = new MyLabel(str,this);
+            labelGroup[i]->setAlignment((Qt::AlignCenter | Qt::AlignVCenter));
+            labelGroup[i]->setMargin(10);
+        }
+    }
+
+    columnCountUpdate();
+    if(pictureNum>columnCount*rowCount){//如果单元格小于图片数量，增加单元格
+        ui->picture_table_widget->setRowCount(pictureNum/columnCount+1);
+    }
+
+    int i=0,j=0;
+    for(int n=0; n<pictureNum; n++)
+    {   
+        ImageLoaderThread *th = new ImageLoaderThread(labelGroup[n],pixmapGroup[n],"",i,j,pictureMaxSize);
         connect(th,&ImageLoaderThread::loadSP_signal,this,&MainWindow::loadSinglePicture);
         th->start();
 
