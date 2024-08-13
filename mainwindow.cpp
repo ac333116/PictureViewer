@@ -24,6 +24,16 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    for(int i; i<pictureNum; i++){
+        if(labelGroup[i]!=nullptr){
+            delete labelGroup[i];
+        }
+        if(pixmapGroup[i]!=nullptr){
+            delete pixmapGroup[i];
+        }
+    }
+
+
     delete ui;
 }
 
@@ -143,7 +153,7 @@ void MainWindow::SlotCreateProject(bool)
     f.setPointSize(12);
     item->setFont(f);
     //设置图标图片
-    QPixmap originalPixmap("D:\\QT\\Projects\\myPhotoAlbum\\icon\\picture-album.png");//传入图标图像
+    QPixmap originalPixmap(":icon/picture-album.png");//传入图标图像
     QPixmap scaledPixmap = originalPixmap.scaled(QSize(25, 25)); //调整图标尺寸
     QIcon icon;
     icon.addPixmap(scaledPixmap);
