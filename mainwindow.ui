@@ -152,7 +152,7 @@
              <item row="0" column="0">
               <layout class="QGridLayout" name="picture_list">
                <item row="0" column="0">
-                <widget class="QTableWidget" name="picture_table_widget">
+                <widget class="MyTableWidget" name="picture_table_widget">
                  <property name="styleSheet">
                   <string notr="true">background-color:rgb(80,80,80);</string>
                  </property>
@@ -183,6 +183,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>mytablewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

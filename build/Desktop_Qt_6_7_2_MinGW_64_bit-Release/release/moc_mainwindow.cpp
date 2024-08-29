@@ -37,19 +37,17 @@ namespace {
 struct qt_meta_stringdata_CLASSMainWindowENDCLASS_t {};
 constexpr auto qt_meta_stringdata_CLASSMainWindowENDCLASS = QtMocHelpers::stringData(
     "MainWindow",
-    "SlotCreateProject",
+    "startImageLoad",
     "",
-    "SlotClearProject",
-    "SlotZoomIn",
-    "SlotZoomOut",
-    "wheelEvent",
-    "QWheelEvent*",
-    "event",
-    "loadSinglePicture",
+    "MyLabel*",
+    "label",
+    "QPixmap*",
+    "pixmap",
+    "path",
     "i",
     "j",
-    "MyLabel*",
-    "label"
+    "pictureMaxSizeOverall",
+    "pictureMaxSize"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -62,28 +60,18 @@ Q_CONSTINIT static const uint qt_meta_data_CLASSMainWindowENDCLASS[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       1,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       0,       // signalCount
+       1,       // signalCount
 
- // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    1,   50,    2, 0x08,    1 /* Private */,
-       3,    0,   53,    2, 0x08,    3 /* Private */,
-       4,    0,   54,    2, 0x08,    4 /* Private */,
-       5,    0,   55,    2, 0x08,    5 /* Private */,
-       6,    1,   56,    2, 0x08,    6 /* Private */,
-       9,    3,   59,    2, 0x08,    8 /* Private */,
+ // signals: name, argc, parameters, tag, flags, initial metatype offsets
+       1,    7,   20,    2, 0x06,    1 /* Public */,
 
- // slots: parameters
-    QMetaType::Void, QMetaType::Bool,    2,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 7,    8,
-    QMetaType::Void, QMetaType::Int, QMetaType::Int, 0x80000000 | 12,   10,   11,   13,
+ // signals: parameters
+    QMetaType::Void, 0x80000000 | 3, 0x80000000 | 5, QMetaType::QString, QMetaType::Int, QMetaType::Int, QMetaType::Int, QMetaType::Int,    4,    6,    7,    8,    9,   10,   11,
 
        0        // eod
 };
@@ -97,23 +85,15 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_CLASSMainWindowENDCLASS_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
-        // method 'SlotCreateProject'
+        // method 'startImageLoad'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<bool, std::false_type>,
-        // method 'SlotClearProject'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'SlotZoomIn'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'SlotZoomOut'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'wheelEvent'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QWheelEvent *, std::false_type>,
-        // method 'loadSinglePicture'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        QtPrivate::TypeAndForceComplete<MyLabel *, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QPixmap *, std::false_type>,
+        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
         QtPrivate::TypeAndForceComplete<int, std::false_type>,
-        QtPrivate::TypeAndForceComplete<MyLabel *, std::false_type>
+        QtPrivate::TypeAndForceComplete<int, std::false_type>,
+        QtPrivate::TypeAndForceComplete<int, std::false_type>
     >,
     nullptr
 } };
@@ -124,13 +104,17 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->SlotCreateProject((*reinterpret_cast< std::add_pointer_t<bool>>(_a[1]))); break;
-        case 1: _t->SlotClearProject(); break;
-        case 2: _t->SlotZoomIn(); break;
-        case 3: _t->SlotZoomOut(); break;
-        case 4: _t->wheelEvent((*reinterpret_cast< std::add_pointer_t<QWheelEvent*>>(_a[1]))); break;
-        case 5: _t->loadSinglePicture((*reinterpret_cast< std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<MyLabel*>>(_a[3]))); break;
+        case 0: _t->startImageLoad((*reinterpret_cast< std::add_pointer_t<MyLabel*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QPixmap*>>(_a[2])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[4])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[5])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[6])),(*reinterpret_cast< std::add_pointer_t<int>>(_a[7]))); break;
         default: ;
+        }
+    } else if (_c == QMetaObject::IndexOfMethod) {
+        int *result = reinterpret_cast<int *>(_a[0]);
+        {
+            using _t = void (MainWindow::*)(MyLabel * , QPixmap * , QString , int , int , int , int );
+            if (_t _q_method = &MainWindow::startImageLoad; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+                *result = 0;
+                return;
+            }
         }
     }
 }
@@ -154,14 +138,21 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 1)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 1;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 1)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 6;
+        _id -= 1;
     }
     return _id;
+}
+
+// SIGNAL 0
+void MainWindow::startImageLoad(MyLabel * _t1, QPixmap * _t2, QString _t3, int _t4, int _t5, int _t6, int _t7)
+{
+    void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t1))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t2))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t3))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t4))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t5))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t6))), const_cast<void*>(reinterpret_cast<const void*>(std::addressof(_t7))) };
+    QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 QT_WARNING_POP

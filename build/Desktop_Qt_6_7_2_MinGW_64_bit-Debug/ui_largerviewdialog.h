@@ -30,6 +30,7 @@ public:
         LargerViewDialog->resize(400, 300);
         horizontalLayout = new QHBoxLayout(LargerViewDialog);
         horizontalLayout->setObjectName("horizontalLayout");
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
         label = new QLabel(LargerViewDialog);
         label->setObjectName("label");
 

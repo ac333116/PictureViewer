@@ -9,21 +9,21 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    imageloaderthread.cpp \
+    imageloaderwork.cpp \
     largerviewdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     myitem.cpp \
     mylabel.cpp \
-    threadpool.cpp
+    mytablewidget.cpp
 
 HEADERS += \
-    imageloaderthread.h \
+    imageloaderwork.h \
     largerviewdialog.h \
     mainwindow.h \
     myitem.h \
     mylabel.h \
-    threadpool.h
+    mytablewidget.h
 
 FORMS += \
     largerviewdialog.ui \

@@ -32,9 +32,6 @@ int main(int argc, char *argv[])
     }
 
     MainWindow w;
-    //设置主窗口标题和窗口最大化
-    w.setWindowTitle("Album");
-    w.showMaximized();
     w.show();
 
     //std::thread t_time(timer);

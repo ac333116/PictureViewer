@@ -19,9 +19,9 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "mytablewidget.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -50,7 +50,7 @@ public:
     QWidget *widget_vl_right_main;
     QGridLayout *gridLayout;
     QGridLayout *picture_list;
-    QTableWidget *picture_table_widget;
+    MyTableWidget *picture_table_widget;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -156,7 +156,7 @@ public:
         gridLayout->setContentsMargins(2, 2, 2, 2);
         picture_list = new QGridLayout();
         picture_list->setObjectName("picture_list");
-        picture_table_widget = new QTableWidget(widget_vl_right_main);
+        picture_table_widget = new MyTableWidget(widget_vl_right_main);
         picture_table_widget->setObjectName("picture_table_widget");
         picture_table_widget->setStyleSheet(QString::fromUtf8("background-color:rgb(80,80,80);"));
 
