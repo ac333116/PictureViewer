@@ -4,6 +4,13 @@
 #include <QLabel>
 #include <QGuiApplication>
 #include <QRect>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+#include <QCoreApplication>
+#include <QDir>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,11 +27,36 @@ MainWindow::MainWindow(QWidget *parent)
     fileListInitialization();
     //变量初始化
     variateInitialization();
+    //配置初始化
+    configInitialization();
 
 }
 
 MainWindow::~MainWindow()
 {
+    //配置保存
+    QJsonObject config_jsonObj;
+    QJsonArray filePath_jsonArray;
+    for(int i=0; i<ui->file_list_widget->count(); i++){
+        QJsonObject filePath_Obj;
+        filePath_Obj.insert("filePath",static_cast<MyItem*>( ui->file_list_widget->item(i) )->filePath);
+        filePath_jsonArray.append(filePath_Obj);
+    }
+    config_jsonObj.insert("filePath_array",filePath_jsonArray);
+    //保存文件
+    QJsonDocument doc(config_jsonObj);
+    QByteArray json = doc.toJson();
+    QString programDirPath = QCoreApplication::applicationDirPath();//获取程序目录路径
+    QFile file(programDirPath + QDir::separator() + "config.json");
+    file.open(QFile::WriteOnly);
+    file.write(json);
+    file.close();
+
+    //内存释放
+    for(int i=0; i<ui->file_list_widget->count(); i++){
+        delete(ui->file_list_widget->item(i));
+    }
+
     for(int i=0; i<labelGroup.size(); i++){
         if(labelGroup[i]!=nullptr){
             delete labelGroup[i];
@@ -60,7 +92,7 @@ void MainWindow::menuInitialization(){
         QAction* act_create_project = new QAction(QIcon(":icon/doc_add"),tr("创建项目"));
         act_create_project->setShortcut(QKeySequence(Qt::CTRL|Qt::Key_N));
         menu_file->addAction(act_create_project);
-        connect(act_create_project,&QAction::triggered,this,&MainWindow::SlotCreateProject);
+        connect(act_create_project,&QAction::triggered,this,&MainWindow::SlotSelectProject);
         //清空项目
         QAction* act_clear_project = new QAction(QIcon(":icon/delete-five"),tr("清空项目"));
         menu_file->addAction(act_clear_project);
@@ -91,22 +123,22 @@ void MainWindow::menuInitialization(){
         menu_set->addAction(act_zoom_out);
         connect(act_zoom_out,&QAction::triggered,this,&MainWindow::SlotZoomOut);
     }
-    //文件列表初始化
-    void MainWindow::fileListInitialization(){
-        //设置图标大小
-        ui->file_list_widget->setIconSize(QSize(25, 25));
+//文件列表初始化
+void MainWindow::fileListInitialization(){
+    //设置图标大小
+    ui->file_list_widget->setIconSize(QSize(25, 25));
 
-        //当点击条目(item)时，根据条目内存储的路径在图片表格内加载图片
-        connect(ui->file_list_widget,&QListWidget::itemClicked,[this](QListWidgetItem *item){
-            MyItem *myitem = static_cast<MyItem*>(item);
-            //qDebug()<<myitem->filePath;
+    //当点击条目(item)时，根据条目内存储的路径在图片表格内加载图片
+    connect(ui->file_list_widget,&QListWidget::itemClicked,[this](QListWidgetItem *item){
+        MyItem *myitem = static_cast<MyItem*>(item);
+        //qDebug()<<myitem->filePath;
 
-            //加载指定路径
-            if(showPath!=myitem->filePath){  //判断是否与原路径相同，以防重加载
-                showPath = myitem->filePath;
-                showPicture();
-            }
-        });
+        //加载指定路径
+        if(showPath!=myitem->filePath && workNum==0){  //判断是否与原路径相同，以防重加载
+            showPath = myitem->filePath;
+            showPicture();
+        }
+    });
 
 }
 //图片表格初始化
@@ -143,6 +175,35 @@ void MainWindow::variateInitialization()
     QRect screenGeometry = QGuiApplication::primaryScreen()->geometry();
     pictureMaxSizeOverall = screenGeometry.width()/2;
 }
+//配置初始化
+void MainWindow::configInitialization()
+{
+    //打开文件
+    QString programDirPath = QCoreApplication::applicationDirPath();//获取程序目录路径
+    QString configFilePath = programDirPath + QDir::separator() + "config.json";
+    QFile file(configFilePath);
+    if(!file.exists()){
+        qDebug()<<"config.json not exist.";
+        return;
+    }
+    file.open(QFile::ReadOnly);
+    QByteArray json = file.readAll();
+    file.close();
+    QJsonDocument doc = QJsonDocument::fromJson(json);
+    if(!doc.isObject()){
+        qDebug()<<"Not an jsonObject\n";
+        return;
+    }
+
+    //读取数据
+    QJsonObject config_JsonObj = doc.object();
+    QJsonArray filePath_jsonArray = config_JsonObj.value("filePath_array").toArray();
+    for(int i=0; i<filePath_jsonArray.size(); i++){
+        QJsonObject obj = filePath_jsonArray[i].toObject();
+        QString str = obj["filePath"].toString();
+        CreateProject(str);
+    }
+}
 
 //计算新的一列格子数
 void MainWindow::columnCountUpdate()
@@ -157,23 +218,40 @@ void MainWindow::columnCountUpdate()
     ui->picture_table_widget->setColumnCount(columnCount);
 }
 
-//槽函数：创建文件夹
-void MainWindow::SlotCreateProject(bool)
+//槽函数：选择文件夹
+void MainWindow::SlotSelectProject(bool)
 {
     //通过文件对话框选择目标文件夹
     QFileDialog qFileDialog;
     qFileDialog.setFileMode(QFileDialog::Directory);//设置模式：选择文件夹
     qFileDialog.exec();//打开文件选择窗口
+    QString path = qFileDialog.selectedFiles()[0];
 
-    //将路径添加到pathlist
-    // pathlist.append(qFileDialog.selectedFiles());
-    // showPathList();
+    //检查该文件夹是否已经被加入
+    for(int i=0; i<ui->file_list_widget->count(); i++){
+        QString str = static_cast<MyItem*>( ui->file_list_widget->item(i) )->filePath;
+        if(str==path){
+            QMessageBox::information(this,"添加文件夹","该文件夹已经存在");
+            return;
+        }
+    }
 
-    //向file_list_widget列表添加选中的文件(通过Item)
-    //QListWidgetItem *item = new QListWidgetItem();
+    CreateProject(path);
+}
+
+void MainWindow::CreateProject(QString path)
+{
+    //检查路径是否存在
+    QDir dir(path);
+    if (!dir.exists()) {
+        qDebug() << path << "does not exist.";
+        return;
+    }
+
+    //向file_list_widget列表添加Item
     MyItem *item = new MyItem();
-    item->setText(getName(qFileDialog.selectedFiles()[0]));//设置标签名称
-    item->filePath=qFileDialog.selectedFiles()[0];//添加文件路径
+    item->setText(getName(path));//设置标签名称
+    item->filePath=path;//添加文件路径
     //修改字体大小
     QFont f = item->font();
     f.setPointSize(12);
@@ -183,10 +261,10 @@ void MainWindow::SlotCreateProject(bool)
     QPixmap scaledPixmap = originalPixmap.scaled(QSize(25, 25)); //调整图标尺寸
     QIcon icon;
     icon.addPixmap(scaledPixmap);
-    //icon.addFile("D:\\QT\\Projects\\myPhotoAlbum\\icon\\picture-album");
     item->setIcon(icon);
     item->setSizeHint(QSize(100,40));//调整item尺寸
-    ui->file_list_widget->addItem(item);//添加至file_list_widget
+    //添加至file_list_widget
+    ui->file_list_widget->addItem(item);
     //ui->file_list_widget->addItem(getName(qFileDialog.selectedFiles()[0]));
 }
 
@@ -274,14 +352,6 @@ void MainWindow::wheelEvent(QWheelEvent *event)
         //lastWheelTime = QDateTime::currentMSecsSinceEpoch();//更新时间戳
     }
 }
-
-//打印已存入的相册文件路径到命令窗口
-// void MainWindow::showPathList(){
-//     qDebug()<<"pathlist:"<<":\n";
-//     for(QString str:pathlist){//遍历pathlist
-//         qDebug()<<str<<"\n";
-//     }
-// }
 
 //从路径中取得最后一个文件的文件名
 QString MainWindow::getName(QString str){

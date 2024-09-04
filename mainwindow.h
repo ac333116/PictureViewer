@@ -58,6 +58,8 @@ private:
     void pictureTableInitialization();
     //变量初始化
     void variateInitialization();
+    //配置初始化
+    void configInitialization();
 
     void columnCountUpdate();//计算新的一列格子数
     QString getName(QString str);//取得文件名(指定路径)
@@ -67,7 +69,8 @@ private:
     void reloadPicture();//图片重加载
     void loadSinglePicture(int i,int j,MyLabel *label,ImageLoaderWork *worker);//单图片加载函数
 
-    void SlotCreateProject(bool);//创建工程槽函数
+    void SlotSelectProject(bool);//创建工程槽函数
+    void CreateProject(QString path);
     void SlotClearProject();//项目清空
     void SlotZoomIn();//展示图片放大
     void SlotZoomOut();//展示图片放大
