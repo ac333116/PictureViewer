@@ -4,8 +4,10 @@ release/main.o
 release/mainwindow.o
 release/myitem.o
 release/mylabel.o
+release/mylistwidget.o
 release/mytablewidget.o
 release/qrc_rs.o
 release/moc_imageloaderwork.o
 release/moc_largerviewdialog.o
 release/moc_mainwindow.o
+release/moc_mylistwidget.o

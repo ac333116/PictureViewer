@@ -12,6 +12,8 @@
 #include <QDir>
 #include <QMessageBox>
 
+#include <myListWidget.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -140,6 +142,12 @@ void MainWindow::fileListInitialization(){
         }
     });
 
+    //当指定条目被删除时
+    connect(ui->file_list_widget,&myListWidget::removeProject,this,[this](QString removePath){
+        if(removePath == showPath){
+            clearTableWidget();//清空图片表格
+        }
+    });
 }
 //图片表格初始化
 void MainWindow::pictureTableInitialization()
@@ -164,7 +172,7 @@ void MainWindow::pictureTableInitialization()
 void MainWindow::variateInitialization()
 {
     //设置线程最大数量为理想数量
-    threadMaxNum = QThread::idealThreadCount()-2;
+    threadMaxNum = QThread::idealThreadCount()/2;
     //初始化线程组
     for(int i=0; i<threadMaxNum; i++){
         QThread *th = new QThread;
@@ -222,20 +230,37 @@ void MainWindow::columnCountUpdate()
 void MainWindow::SlotSelectProject(bool)
 {
     //通过文件对话框选择目标文件夹
-    QFileDialog qFileDialog;
+    QFileDialog qFileDialog(this);
+    // qFileDialog.setFileMode(QFileDialog::ExistingFiles);//设置模式：选择多个
     qFileDialog.setFileMode(QFileDialog::Directory);//设置模式：选择文件夹
     qFileDialog.exec();//打开文件选择窗口
-    QString path = qFileDialog.selectedFiles()[0];
 
-    //检查该文件夹是否已经被加入
+    // //将选择的文件依次加入
+    // QStringList pathList = qFileDialog.selectedFiles();
+    // for(QString path:pathList){
+    //     //检查该文件夹是否已经被加入
+    //     bool isJoin = false;
+    //     for(int i=0; i<ui->file_list_widget->count(); i++){
+    //         QString str = static_cast<MyItem*>( ui->file_list_widget->item(i) )->filePath;
+    //         if(str==path){
+    //             QMessageBox::information(this,"添加文件夹","该文件夹 "+getName(path)+" 已经存在");
+    //             isJoin = true;
+    //             break;
+    //         }
+    //     }
+    //     if(isJoin == false)
+    //         CreateProject(path);
+    // }
+
+    QString path = qFileDialog.selectedFiles()[0];
+    // 检查该文件夹是否已经被加入
     for(int i=0; i<ui->file_list_widget->count(); i++){
         QString str = static_cast<MyItem*>( ui->file_list_widget->item(i) )->filePath;
         if(str==path){
-            QMessageBox::information(this,"添加文件夹","该文件夹已经存在");
+            QMessageBox::information(this,"添加文件夹","该文件夹 "+getName(path)+" 已经存在");
             return;
         }
     }
-
     CreateProject(path);
 }
 
@@ -268,12 +293,12 @@ void MainWindow::CreateProject(QString path)
     //ui->file_list_widget->addItem(getName(qFileDialog.selectedFiles()[0]));
 }
 
-//项目清空
-void MainWindow::SlotClearProject()
+//清空图片表格
+void MainWindow::clearTableWidget()
 {
-    ui->file_list_widget->clear();
-
+    //清空表格
     ui->picture_table_widget->clearContents();
+    //释放内存
     for(int i=0; i<pictureNum; i++){
         if(labelGroup[i]!=nullptr){
             delete labelGroup[i];
@@ -286,9 +311,22 @@ void MainWindow::SlotClearProject()
     }
     labelGroup.clear();
     pixmapGroup.clear();
-
+    //重置变量
     showPath = "";
     pictureNum = 0;
+}
+
+//清空项目
+void MainWindow::SlotClearProject()
+{
+    //释放Item内存
+    for(int i=0; i<ui->file_list_widget->count(); i++){
+        delete(ui->file_list_widget->item(i));
+    }
+    //清空项目
+    ui->file_list_widget->clear();
+    //清空图片表格
+    clearTableWidget();
 }
 
 //菜单:图片放大

@@ -15,6 +15,7 @@ SOURCES += \
     mainwindow.cpp \
     myitem.cpp \
     mylabel.cpp \
+    mylistwidget.cpp \
     mytablewidget.cpp
 
 HEADERS += \
@@ -23,6 +24,7 @@ HEADERS += \
     mainwindow.h \
     myitem.h \
     mylabel.h \
+    mylistwidget.h \
     mytablewidget.h
 
 FORMS += \

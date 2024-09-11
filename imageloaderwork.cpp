@@ -1,4 +1,5 @@
 #include "imageloaderwork.h"
+#include <QImageReader>
 
 ImageLoaderWork::ImageLoaderWork(QObject *parent)
     : QObject{parent}
@@ -6,33 +7,30 @@ ImageLoaderWork::ImageLoaderWork(QObject *parent)
 
 void ImageLoaderWork::imageLoad(MyLabel *label,QPixmap *pixmap,QString path,int i,int j,int pictureMaxSizeOverall,int pictureMaxSize)
 {
+    //控制照片保存尺寸
+    // if(path!=""){
+    //     pixmap->load(path);
+    //     //照片尺寸限制
+    //     if(pixmap->width()>pictureMaxSizeOverall || pixmap->height()>pictureMaxSizeOverall){
+    //         int w = pixmap->width();
+    //         int h = pixmap->height();
+    //         modifySize(w,h,pictureMaxSizeOverall);
+    //         *pixmap = pixmap->scaled(w,h);
+    //     }
+    // }
     if(path!=""){
-        pixmap->load(path);
+        QImageReader reader(path);
         //照片尺寸限制
-        if(pixmap->width()>pictureMaxSizeOverall || pixmap->height()>pictureMaxSizeOverall){
-            int w = pixmap->width();
-            int h = pixmap->height();
+        int w = reader.size().width();
+        int h = reader.size().height();
+        if(w>pictureMaxSizeOverall || h>pictureMaxSizeOverall){
             modifySize(w,h,pictureMaxSizeOverall);
-            *pixmap = pixmap->scaled(w,h);
         }
+        reader.setScaledSize(QSize(w,h));
+        *pixmap = QPixmap::fromImageReader(&reader);
     }
 
-    //调整图片尺寸，防止图片过大
-    // int w,h;
-    // if(pixmap->width()<=pictureMaxSize && pixmap->height()<=pictureMaxSize){
-    //     w=pixmap->width();
-    //     h=pixmap->height();
-    // }
-    // else if(pixmap->width()>pixmap->height()){
-    //     w=pictureMaxSize;
-    //     h=pixmap->height()*pictureMaxSize/pixmap->width();
-    // }
-    // else{
-    //     h=pictureMaxSize;
-    //     w=pixmap->width()*pictureMaxSize/pixmap->height();
-    // }
-    // QPixmap pixmap_temp = pixmap->scaled(QSize(w,h));
-
+    //控制照片显示尺寸
     int w = pixmap->width();
     int h = pixmap->height();
     if(w>pictureMaxSize || h>pictureMaxSize){

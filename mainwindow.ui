@@ -86,9 +86,11 @@
              <item>
               <layout class="QVBoxLayout" name="file_list">
                <item>
-                <widget class="QListWidget" name="file_list_widget">
+                <widget class="myListWidget" name="file_list_widget">
                  <property name="styleSheet">
-                  <string notr="true">background-color:rgb(110,110,110);</string>
+                  <string notr="true">QListWidget { background-color: rgb(110, 110, 110); }
+QListWidget::item:hover { background-color: rgb(130, 130, 130); }
+QListWidget::item:selected { color: rgb(0,0,0) ;background-color: rgb(160, 160, 160); }</string>
                  </property>
                 </widget>
                </item>
@@ -188,6 +190,11 @@
    <class>MyTableWidget</class>
    <extends>QTableWidget</extends>
    <header>mytablewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>myListWidget</class>
+   <extends>QListWidget</extends>
+   <header>mylistwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

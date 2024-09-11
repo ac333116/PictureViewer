@@ -69,8 +69,9 @@ private:
     void reloadPicture();//图片重加载
     void loadSinglePicture(int i,int j,MyLabel *label,ImageLoaderWork *worker);//单图片加载函数
 
-    void SlotSelectProject(bool);//创建工程槽函数
-    void CreateProject(QString path);
+    void SlotSelectProject(bool);//创建工程槽函数(文件选择)
+    void CreateProject(QString path);//创建工程
+    void clearTableWidget();//清空图片表格窗口
     void SlotClearProject();//项目清空
     void SlotZoomIn();//展示图片放大
     void SlotZoomOut();//展示图片放大

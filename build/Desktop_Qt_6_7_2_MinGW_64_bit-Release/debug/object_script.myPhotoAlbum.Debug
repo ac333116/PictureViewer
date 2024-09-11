@@ -4,8 +4,10 @@ debug/main.o
 debug/mainwindow.o
 debug/myitem.o
 debug/mylabel.o
+debug/mylistwidget.o
 debug/mytablewidget.o
 debug/qrc_rs.o
 debug/moc_imageloaderwork.o
 debug/moc_largerviewdialog.o
 debug/moc_mainwindow.o
+debug/moc_mylistwidget.o

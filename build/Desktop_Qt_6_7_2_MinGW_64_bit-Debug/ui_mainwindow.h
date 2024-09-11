@@ -15,12 +15,12 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "mylistwidget.h"
 #include "mytablewidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -40,7 +40,7 @@ public:
     QWidget *widget_vl_left_main;
     QVBoxLayout *verticalLayout_7;
     QVBoxLayout *file_list;
-    QListWidget *file_list_widget;
+    myListWidget *file_list_widget;
     QVBoxLayout *vl_right;
     QVBoxLayout *vl_right_top;
     QWidget *widget_vl_right_top;
@@ -102,9 +102,11 @@ public:
         verticalLayout_7->setContentsMargins(2, 2, 2, 2);
         file_list = new QVBoxLayout();
         file_list->setObjectName("file_list");
-        file_list_widget = new QListWidget(widget_vl_left_main);
+        file_list_widget = new myListWidget(widget_vl_left_main);
         file_list_widget->setObjectName("file_list_widget");
-        file_list_widget->setStyleSheet(QString::fromUtf8("background-color:rgb(110,110,110);"));
+        file_list_widget->setStyleSheet(QString::fromUtf8("QListWidget { background-color: rgb(110, 110, 110); }\n"
+"QListWidget::item:hover { background-color: rgb(130, 130, 130); }\n"
+"QListWidget::item:selected { color: rgb(0,0,0) ;background-color: rgb(160, 160, 160); }"));
 
         file_list->addWidget(file_list_widget);
 

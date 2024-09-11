@@ -16,7 +16,7 @@ public:
 private:
     LargerViewDialog *lvd=nullptr;//大图浏览窗口
 
-    void mousePressEvent(QMouseEvent *event);//鼠标点击事件
+    void mousePressEvent(QMouseEvent *event) override;//鼠标点击事件
 };
 
 #endif // MYLABEL_H
